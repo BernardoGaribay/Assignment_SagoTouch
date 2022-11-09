@@ -4,6 +4,7 @@ namespace AssignmentExample {
 	using System.Collections.Generic;
 	using SagoTouch;
 	using Touch = SagoTouch.Touch;
+	using SagoNewton;
 
 	public class ExampleObserver : MonoBehaviour, ISingleTouchObserver {
 
@@ -20,6 +21,9 @@ namespace AssignmentExample {
 
 		[System.NonSerialized]
 		private Transform m_Transform;
+
+		[System.NonSerialized]
+		private Moveable m_Moveable;
 
 		#endregion
 
@@ -40,6 +44,10 @@ namespace AssignmentExample {
 
 		public List<Touch> Touches {
 			get { return m_Touches = m_Touches ?? new List<Touch>();}
+		}
+
+		public Moveable Moveable {
+			get { return m_Moveable = m_Moveable ?? GetComponent<Moveable>(); }
 		}
 
 		#endregion
@@ -79,7 +87,7 @@ namespace AssignmentExample {
 		}
 
 		public void OnTouchMoved(Touch touch) {
-			
+			this.Moveable.Position = CameraUtils.TouchToWorldPoint(touch, this.Transform, this.Camera);
 		}
 
 		public void OnTouchEnded(Touch touch) {

@@ -4,3 +4,6 @@
 [submodule "Assets/Framework/SagoCore"]
 	path = Assets/Framework/SagoCore
 	url = git@github.com:SagoSago/sago-core.git
+[submodule "Assets/Framework/SagoPlaysetCore"]
+	path = Assets/Framework/SagoPlaysetCore
+	url = git@github.com:SagoSago/core-playset-components.git

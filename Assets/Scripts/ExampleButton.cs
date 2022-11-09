@@ -3,10 +3,15 @@ namespace  AssignmentExample
 	using UnityEngine;
 	using SagoTouch;
 	using Touch = SagoTouch.Touch;
+	using SagoNewton;
+	using TMPro;
 
 	public class ExampleButton : MonoBehaviour {
 		
 		#region Fields
+
+		[System.NonSerialized]
+		private TextMeshProUGUI m_ButtonText;
 
 		[System.NonSerialized]
 		private TouchArea m_TouchArea;
@@ -17,6 +22,10 @@ namespace  AssignmentExample
 		#endregion
 
 		#region Properties
+
+		public TextMeshProUGUI ButtonText {
+			get { return m_ButtonText = m_ButtonText ?? GetComponentInChildren<TextMeshProUGUI>(); }
+		}
 
 		public TouchArea TouchArea {
 			get { return m_TouchArea = m_TouchArea ?? GetComponent<TouchArea>(); }
@@ -64,6 +73,18 @@ namespace  AssignmentExample
 			if (TouchDispatcher.Instance) {
 				TouchDispatcher.Instance.enabled = true;
 			}
+		}
+
+		public void OnToggleTouchInputClicked() {
+			this.ButtonText.text = TouchDispatcher.Instance.enabled ? "Enable Touch Input" : "Disable Touch Input";
+
+			if (TouchDispatcher.Instance.enabled) {
+				DisableAllTouchInput();
+			}
+			else {
+				EnableAllTouchInput();
+			}
+			
 		}
 
 		#endregion
