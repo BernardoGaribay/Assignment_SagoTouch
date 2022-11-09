@@ -4,62 +4,83 @@ using Touch = SagoTouch.Touch;
 
 public class ExampleObserver : MonoBehaviour, ISingleTouchObserver {
 
-    #region Fields
-    [System.NonSerialized]
-    private Camera m_Camera;
+	#region Fields
 
-    [System.NonSerialized]
-    private Renderer m_Renderer;
+	[System.NonSerialized]
+	private Camera m_Camera;
 
-    [System.NonSerialized]
-    private Transform m_Transform;
-    #endregion
+	[System.NonSerialized]
+	private Renderer m_Renderer;
 
-    public Camera Camera {
-        get { return m_Camera = m_Camera ?? CameraUtils.FindRootCamera(this.Transform);}
-    }
+	[System.NonSerialized]
+	private Touch m_Touch;
 
-    public Renderer Renderer {
-        get { return m_Renderer = m_Renderer ?? GetComponent<Renderer>(); }
-    }
+	[System.NonSerialized]
+	private Transform m_Transform;
 
-    public Transform Transform {
-        get { return m_Transform = m_Transform ?? GetComponent<Transform>(); }
-    }
-        
-    public bool OnTouchBegan(Touch touch) {
-        // ...
-        return false;
-    }
-    
-    public void OnTouchMoved(Touch touch) {
-        // ...
-    }
-    
-    public void OnTouchEnded(Touch touch) {
-        // ...
-    }
-    
-    public void OnTouchCancelled(Touch touch) {
-        // ...
-    }
+	#endregion
 
-    private void OnEnable() {
-        if(TouchDispatcher.Instance){
-            TouchDispatcher.Instance.Add(this, 0, true);
-        }
-    }
+	#region Properties
 
-    private void OnDisable() {
-        if(TouchDispatcher.Instance){
-            TouchDispatcher.Instance.Remove(this);
-        }
-    }
+	public Camera Camera {
+		get { return m_Camera = m_Camera ?? CameraUtils.FindRootCamera(this.Transform);}
+	}
 
-    private bool HitTest(Touch touch) {
-        var bounds = this.Renderer.bounds;
-        bounds.extents += Vector3.forward;
-        return bounds.Contains(CameraUtils.TouchToWorldPoint(touch, this.Transform, this.Camera));
-    }
+	public Renderer Renderer {
+		get { return m_Renderer = m_Renderer ?? GetComponent<Renderer>(); }
+	}
+
+	public Transform Transform {
+		get { return m_Transform = m_Transform ?? GetComponent<Transform>(); }
+	}
+
+	#endregion
+
+	#region Methods
+
+	private void OnEnable() {
+		if (TouchDispatcher.Instance){
+			TouchDispatcher.Instance.Add(this, 0, true);
+		}
+	}
+
+	private void OnDisable() {
+		if (TouchDispatcher.Instance){
+			TouchDispatcher.Instance.Remove(this);
+		}
+	}
+
+	private bool HitTest(Touch touch) {
+		var bounds = this.Renderer.bounds;
+		bounds.extents += Vector3.forward;
+		return bounds.Contains(CameraUtils.TouchToWorldPoint(touch, this.Transform, this.Camera));
+	}
+
+	#endregion
+
+	#region ISingleTouchObserver
+
+	public bool OnTouchBegan(Touch touch) {
+		if (m_Touch == null && HitTest(touch)) {
+			m_Touch = touch;
+			return true;
+		}
+		return false;
+	}
+
+	public void OnTouchMoved(Touch touch) {
+		
+	}
+
+	public void OnTouchEnded(Touch touch) {
+		m_Touch = null;
+	}
+
+	//Important to always implement OnTouchCancelled, otherwise observer may look like it stopped responding to touches (not clearing m_Touch)
+	public void OnTouchCancelled(Touch touch) {
+		OnTouchEnded(touch);
+	}
+
+	#endregion
 }
 
