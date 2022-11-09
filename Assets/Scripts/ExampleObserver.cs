@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using SagoTouch;
 using Touch = SagoTouch.Touch;
 
@@ -13,12 +14,13 @@ public class ExampleObserver : MonoBehaviour, ISingleTouchObserver {
 	private Renderer m_Renderer;
 
 	[System.NonSerialized]
-	private Touch m_Touch;
+	private List<Touch> m_Touches;
 
 	[System.NonSerialized]
 	private Transform m_Transform;
 
 	#endregion
+
 
 	#region Properties
 
@@ -34,7 +36,12 @@ public class ExampleObserver : MonoBehaviour, ISingleTouchObserver {
 		get { return m_Transform = m_Transform ?? GetComponent<Transform>(); }
 	}
 
+	public List<Touch> Touches {
+		get { return m_Touches = m_Touches ?? new List<Touch>();}
+	}
+
 	#endregion
+
 
 	#region Methods
 
@@ -58,11 +65,12 @@ public class ExampleObserver : MonoBehaviour, ISingleTouchObserver {
 
 	#endregion
 
+
 	#region ISingleTouchObserver
 
 	public bool OnTouchBegan(Touch touch) {
-		if (m_Touch == null && HitTest(touch)) {
-			m_Touch = touch;
+		if (HitTest(touch)) {
+			this.Touches.Add(touch);
 			return true;
 		}
 		return false;
@@ -73,7 +81,7 @@ public class ExampleObserver : MonoBehaviour, ISingleTouchObserver {
 	}
 
 	public void OnTouchEnded(Touch touch) {
-		m_Touch = null;
+		this.Touches.Remove(touch);
 	}
 
 	//Important to always implement OnTouchCancelled, otherwise observer may look like it stopped responding to touches (not clearing m_Touch)
