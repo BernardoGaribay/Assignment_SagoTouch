@@ -1,7 +1,5 @@
 namespace  AssignmentExample
 {
-	using System.Collections;
-	using System.Collections.Generic;
 	using UnityEngine;
 	using SagoTouch;
 	using Touch = SagoTouch.Touch;
@@ -53,7 +51,23 @@ namespace  AssignmentExample
 			this.TouchArea.enabled = true;
 		}
 
+		// it is suggested to either delay the re-enabling of the TouchArea 
+		//or to skip disabling it if it is known it will be re-enabled in the same frame
+		//it is known to cause issues without this workaround
+		private void DisableAllTouchInput() {
+			if (TouchDispatcher.Instance) {
+				TouchDispatcher.Instance.enabled = false;
+			}
+		}
+
+		private void EnableAllTouchInput() {
+			if (TouchDispatcher.Instance) {
+				TouchDispatcher.Instance.enabled = true;
+			}
+		}
+
 		#endregion
+
 	}
 }
 
